@@ -1,25 +1,36 @@
-import logo from './logo.svg';
 import './App.css';
+import { useState, useRef, useEffect } from 'react';
 
 function App() {
+  const [tareas, setTareas] = useState([]);
+
+  const tareaTexto = useRef();
+
+  useEffect(() => {
+    const tareasExistentes = localStorage.getItem('tareas');
+    setTareas(tareasExistentes ? JSON.parse(tareasExistentes) : []);
+  }, [])
+
+  function addTarea(event) {
+    event.preventDefault();
+    const next = [...tareas, tareaTexto.current.value];
+    tareaTexto.current.value = "";
+    setTareas(next);
+    localStorage.setItem('tareas', JSON.stringify(next));
+  }
+ 
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ul>
+        {tareas.map(tarea => (<li key={tarea}>{tarea}</li>))}
+      </ul>
+
+      <form onSubmit={addTarea}>
+        <input ref={tareaTexto} />
+        <input type="submit" value="Añadir Tarea" />
+      </form>
     </div>
-  );
+  )
 }
 
 export default App;
